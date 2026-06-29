@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Achievements — OT-ICS Lab{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2><i class="bi bi-trophy me-2 text-warning"></i>Achievements</h2>
+        <p class="text-secondary">Earn achievements by completing quests and demonstrating OT security skills.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for a in achievements %}
+    <div class="col-md-6 col-lg-4 col-xl-3">
+        <div class="card h-100 {% if a.earned %}border-success border-opacity-50 bg-dark-subtle{% else %}bg-dark-subtle border-secondary opacity-50{% endif %}">
+            <div class="card-body text-center p-4">
+                <div class="display-3 mb-3">{{ a.achievement.icon }}</div>
+                <h5>{{ a.achievement.title }}</h5>
+                <p class="text-secondary small mb-3">{{ a.achievement.description }}</p>
+                {% if a.earned %}
+                <span class="badge bg-success">
+                    <i class="bi bi-check-circle-fill me-1"></i>Earned
+                </span>
+                {% else %}
+                <span class="badge bg-secondary">
+                    <i class="bi bi-lock me-1"></i>Locked
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

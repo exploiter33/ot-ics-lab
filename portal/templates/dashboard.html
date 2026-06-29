@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — OT-ICS Lab{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
+        <p class="text-secondary">Welcome back, <strong>{{ current_user.display_name }}</strong>.</p>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card bg-dark-subtle border-secondary h-100">
+            <div class="card-body text-center">
+                <div class="display-6 text-info">{{ completed_quests }}/{{ total_quests }}</div>
+                <div class="text-secondary small">Quests Completed</div>
+                <div class="progress mt-2" style="height: 4px;">
+                    <div class="progress-bar bg-info" style="width: {% if total_quests %}{{ (completed_quests / total_quests * 100)|int }}{% else %}0{% endif %}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark-subtle border-secondary h-100">
+            <div class="card-body text-center">
+                <div class="display-6 text-warning">{{ earned_achievements }}/{{ total_achievements }}</div>
+                <div class="text-secondary small">Achievements Earned</div>
+                <div class="progress mt-2" style="height: 4px;">
+                    <div class="progress-bar bg-warning" style="width: {% if total_achievements %}{{ (earned_achievements / total_achievements * 100)|int }}{% else %}0{% endif %}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark-subtle border-secondary h-100">
+            <div class="card-body text-center">
+                <div class="display-6 text-success">{{ zones|length }}</div>
+                <div class="text-secondary small">Purdue Zones</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark-subtle border-secondary h-100">
+            <div class="card-body text-center">
+                <div class="display-6 text-primary">{{ services|length }}</div>
+                <div class="text-secondary small">Lab Services</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card bg-dark-subtle border-secondary">
+            <div class="card-header bg-transparent border-secondary">
+                <h5 class="mb-0"><i class="bi bi-layers me-2"></i>Purdue Model — Zones</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush bg-transparent">
+                    {% for z in zones %}
+                    <a href="{{ url_for('quests', zone=z.id) }}"
+                       class="list-group-item list-group-item-action bg-transparent border-secondary d-flex align-items-center">
+                        <span class="fs-4 me-3">{{ z.icon }}</span>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ z.name }}</strong>
+                                <span class="badge" style="background-color: {{ z.color }}">Level {{ z.level }}</span>
+                            </div>
+                            <small class="text-secondary">{{ z.description[:100] }}{% if z.description|length > 100 %}...{% endif %}</small>
+                        </div>
+                        <i class="bi bi-chevron-right ms-3 text-secondary"></i>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card bg-dark-subtle border-secondary mb-3">
+            <div class="card-header bg-transparent border-secondary">
+                <h5 class="mb-0"><i class="bi bi-trophy me-2 text-warning"></i>Recent Achievements</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_activity %}
+                <ul class="list-unstyled mb-0">
+                    {% for act in recent_activity %}
+                    <li class="mb-2 small">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        Completed objective in quest #{{ act.quest_id }}
+                        <br>
+                        <span class="text-secondary">{{ act.completed_at.strftime('%Y-%m-%d %H:%M') if act.completed_at else '' }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-secondary small mb-0">No activity yet. Start a quest!</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card bg-dark-subtle border-secondary">
+            <div class="card-header bg-transparent border-secondary">
+                <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Lab Services</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    {% for s in services %}
+                    <li class="mb-2 small d-flex align-items-center">
+                        <span class="me-2">{{ s.icon }}</span>
+                        <span>{{ s.name }}</span>
+                        <span class="ms-auto badge {% if s.status == 'running' %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ s.status }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('services') }}" class="btn btn-sm btn-outline-secondary mt-2 w-100">
+                    <i class="bi bi-gear-wide"></i> Manage Services
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

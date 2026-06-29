@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}{{ quest.title }} — OT-ICS Lab{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('quests') }}" class="text-info">Quests</a></li>
+        <li class="breadcrumb-item active">{{ quest.title }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card bg-dark-subtle border-secondary mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <span class="badge {% if quest.difficulty == 'beginner' %}bg-success{% elif quest.difficulty == 'intermediate' %}bg-warning text-dark{% else %}bg-danger{% endif %} mb-2">
+                            {{ quest.difficulty }}
+                        </span>
+                        <h3>{{ quest.title }}</h3>
+                    </div>
+                    <span class="badge bg-info fs-6">
+                        <i class="bi bi-star me-1"></i>{{ quest.points }} pts
+                    </span>
+                </div>
+                <p class="text-secondary">{{ quest.description }}</p>
+                <div class="d-flex align-items-center text-secondary small">
+                    <span class="me-3">{{ zone.icon }} {{ zone.name }}</span>
+                    <span><i class="bi bi-tag me-1"></i>{{ quest.category }}</span>
+                </div>
+            </div>
+        </div>
+
+        {% if quest_complete %}
+        <div class="alert alert-success border-2 mb-4">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <strong>Quest Complete!</strong> All objectives have been completed.
+        </div>
+        {% endif %}
+
+        <h4 class="mb-3"><i class="bi bi-list-check me-2"></i>Objectives</h4>
+
+        {% for obj in objectives %}
+        <div class="card mb-3 {% if objective_progress[obj.id] and objective_progress[obj.id].completed %}border-success border-opacity-50{% else %}bg-dark-subtle border-secondary{% endif %}">
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="me-3 mt-1">
+                        {% if objective_progress[obj.id] and objective_progress[obj.id].completed %}
+                        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                        {% else %}
+                        <i class="bi bi-circle text-secondary fs-5"></i>
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="card-title">{{ obj.title }}</h5>
+                        <p class="card-text text-secondary small">{{ obj.description }}</p>
+
+                        {% if obj.hints %}
+                        <div class="collapse" id="hints{{ obj.id }}">
+                            <div class="alert alert-info small py-2 mb-2">
+                                <i class="bi bi-lightbulb me-1"></i> {{ obj.hints }}
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-info" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#hints{{ obj.id }}">
+                            <i class="bi bi-lightbulb me-1"></i> Hint
+                        </button>
+                        {% endif %}
+
+                        {% if not (objective_progress[obj.id] and objective_progress[obj.id].completed) %}
+                        <button class="btn btn-sm btn-success ms-2 complete-obj"
+                                data-quest-id="{{ quest.id }}"
+                                data-obj-id="{{ obj.id }}">
+                            <i class="bi bi-check-lg me-1"></i> Mark Complete
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card bg-dark-subtle border-secondary mb-4">
+            <div class="card-header bg-transparent border-secondary">
+                <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Quest Info</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0 small">
+                    <li class="mb-2">
+                        <strong>Zone:</strong>
+                        <span class="float-end">{{ zone.icon }} {{ zone.name }}</span>
+                    </li>
+                    <li class="mb-2">
+                        <strong>Difficulty:</strong>
+                        <span class="float-end badge bg-{{ 'success' if quest.difficulty == 'beginner' else 'warning' if quest.difficulty == 'intermediate' else 'danger' }}">
+                            {{ quest.difficulty }}
+                        </span>
+                    </li>
+                    <li class="mb-2">
+                        <strong>Category:</strong>
+                        <span class="float-end">{{ quest.category }}</span>
+                    </li>
+                    <li>
+                        <strong>Points:</strong>
+                        <span class="float-end">{{ quest.points }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card bg-dark-subtle border-secondary">
+            <div class="card-header bg-transparent border-secondary">
+                <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Useful Tools</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small mb-0">
+                    <li class="mb-2">
+                        <code>nmap -sV -p 5020 &lt;target&gt;</code>
+                        <br><span class="text-secondary">Modbus scan</span>
+                    </li>
+                    <li class="mb-2">
+                        <code>mosquitto_sub -h &lt;host&gt; -t '#' -v</code>
+                        <br><span class="text-secondary">MQTT monitor</span>
+                    </li>
+                    <li class="mb-2">
+                        <code>tcpdump -i any port 5020</code>
+                        <br><span class="text-secondary">Traffic capture</span>
+                    </li>
+                    <li>
+                        <code>curl http://safe-practice:9090/explore</code>
+                        <br><span class="text-secondary">Practice area API</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('.complete-obj').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const questId = this.dataset.questId;
+        const objId = this.dataset.objId;
+        const card = this.closest('.card');
+
+        fetch(`/api/quest/${questId}/objective/${objId}/complete`, {
+            method: 'POST',
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                card.classList.add('border-success', 'border-opacity-50');
+                const icon = card.querySelector('.bi-circle');
+                if (icon) {
+                    icon.className = 'bi bi-check-circle-fill text-success fs-5';
+                }
+                this.remove();
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

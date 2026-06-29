@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Quests — OT-ICS Lab{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2><i class="bi bi-crosshair me-2"></i>Quests</h2>
+        <p class="text-secondary">Complete objectives to progress through the lab. Each quest builds practical OT security skills.</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col">
+        <div class="btn-group" role="group">
+            <a href="{{ url_for('quests') }}" class="btn btn-sm {% if not current_zone %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                All
+            </a>
+            {% for z in zones %}
+            <a href="{{ url_for('quests', zone=z.id) }}"
+               class="btn btn-sm {% if current_zone == z.id %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                {{ z.icon }} {{ z.name|truncate(12, True, '..') }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for qd in quest_data %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 bg-dark-subtle border-secondary
+            {% if qd.completed_count >= qd.total_objectives and qd.total_objectives > 0 %}border-success border-opacity-50{% endif %}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge {% if qd.quest.difficulty == 'beginner' %}bg-success{% elif qd.quest.difficulty == 'intermediate' %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                        {{ qd.quest.difficulty }}
+                    </span>
+                    <span class="badge bg-secondary">{{ qd.zone.icon }} {{ qd.zone.name }}</span>
+                </div>
+                <h5 class="mt-2">{{ qd.quest.title }}</h5>
+                <p class="text-secondary small">{{ qd.quest.description[:120] }}{% if qd.quest.description|length > 120 %}...{% endif %}</p>
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <small class="text-secondary">
+                        {{ qd.completed_count }}/{{ qd.total_objectives }} objectives
+                        <span class="ms-2 badge bg-dark-subtle text-info border border-info">
+                            <i class="bi bi-star me-1"></i>{{ qd.quest.points }} pts
+                        </span>
+                    </small>
+                </div>
+                <div class="progress mt-2" style="height: 4px;">
+                    <div class="progress-bar {% if qd.completed_count >= qd.total_objectives %}bg-success{% else %}bg-info{% endif %}"
+                         style="width: {% if qd.total_objectives %}{{ (qd.completed_count / qd.total_objectives * 100)|int }}{% else %}0{% endif %}%">
+                    </div>
+                </div>
+
+                <a href="{{ url_for('quest_detail', quest_id=qd.quest.id) }}"
+                   class="btn btn-sm btn-outline-light mt-3 w-100">
+                    {% if qd.completed_count >= qd.total_objectives and qd.total_objectives > 0 %}
+                    <i class="bi bi-check-circle-fill text-success me-1"></i> Review Quest
+                    {% else %}
+                    <i class="bi bi-arrow-right-circle me-1"></i> Start Quest
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Services — OT-ICS Lab{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2><i class="bi bi-gear me-2"></i>Lab Services</h2>
+        <p class="text-secondary">Control and monitor lab components. Start/stop services and check their status.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for s in services %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card bg-dark-subtle border-secondary h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="fs-2">{{ s.icon }}</span>
+                    <span class="badge {% if s.status == 'running' %}bg-success{% else %}bg-secondary{% endif %} service-badge"
+                          data-service-id="{{ s.id }}">
+                        {{ s.status }}
+                    </span>
+                </div>
+                <h5>{{ s.name }}</h5>
+                <p class="text-secondary small">{{ s.description }}</p>
+                {% if s.endpoint %}
+                <small class="text-info"><code>{{ s.endpoint }}</code></small>
+                {% endif %}
+                <div class="mt-3">
+                    <button class="btn btn-sm btn-outline-success toggle-service"
+                            data-service-id="{{ s.id }}">
+                        <i class="bi bi-play-fill me-1"></i>Start
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger toggle-service"
+                            data-service-id="{{ s.id }}">
+                        <i class="bi bi-stop-fill me-1"></i>Stop
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card bg-dark-subtle border-secondary mt-4">
+    <div class="card-body">
+        <h5><i class="bi bi-info-circle me-2 text-info"></i>Service Management</h5>
+        <p class="text-secondary small mb-0">
+            Service buttons control the lab's virtual service state tracking in this portal.
+            Actual Docker containers are managed via <code>docker-compose</code> commands.
+            Use the <code>docker-compose up</code> and <code>docker-compose down</code>
+            commands in the lab directory to manage the full environment.
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('.toggle-service').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const serviceId = this.dataset.serviceId;
+        fetch(`/api/services/${serviceId}/toggle`, {
+            method: 'POST',
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
+        })
+        .then(r => r.json())
+        .then(data => {
+            const badge = document.querySelector(`.service-badge[data-service-id="${serviceId}"]`);
+            if (badge) {
+                badge.textContent = data.status;
+                badge.className = `badge ${data.status === 'running' ? 'bg-success' : 'bg-secondary'} service-badge`;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

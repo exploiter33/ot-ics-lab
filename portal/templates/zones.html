@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Purdue Zones — OT-ICS Lab{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2><i class="bi bi-layers me-2"></i>Purdue Model Zones</h2>
+        <p class="text-secondary">The Purdue Enterprise Reference Architecture (PERA) divides ICS networks into functional zones. Each zone represents a different level of control and trust.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for zd in zone_data %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-start border-4" style="border-left-color: {{ zd.zone.color }} !important;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <span class="fs-2">{{ zd.zone.icon }}</span>
+                        <h4 class="mt-2">{{ zd.zone.name }}</h4>
+                    </div>
+                    <span class="badge fs-6" style="background-color: {{ zd.zone.color }}">L{{ zd.zone.level }}</span>
+                </div>
+                <p class="text-secondary small">{{ zd.zone.description }}</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <small class="text-secondary">
+                        Quests: {{ zd.completed }}/{{ zd.total }}
+                    </small>
+                    <div class="progress flex-grow-1 mx-3" style="height: 4px;">
+                        <div class="progress-bar" style="width: {% if zd.total %}{{ (zd.completed / zd.total * 100)|int }}{% else %}0{% endif %}%; background-color: {{ zd.zone.color }}"></div>
+                    </div>
+                </div>
+                <a href="{{ url_for('quests', zone=zd.zone.id) }}" class="btn btn-sm btn-outline-light mt-3 w-100">
+                    <i class="bi bi-crosshair me-1"></i>View Quests
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card bg-dark-subtle border-secondary mt-4">
+    <div class="card-body">
+        <h5><i class="bi bi-info-circle me-2 text-info"></i>About the Purdue Model</h5>
+        <p class="text-secondary small mb-0">
+            The Purdue model is a reference architecture for ICS security that defines 6 levels (0-5).
+            Understanding traffic patterns and security controls at each level is essential for OT defenders.
+            This lab simulates devices and traffic at each level so you can practice detection and response
+            across the full ICS kill chain.
+        </p>
+    </div>
+</div>
+{% endblock %}

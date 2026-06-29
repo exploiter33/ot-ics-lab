@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Guides — OT-ICS Lab{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2><i class="bi bi-book me-2"></i>Guides &amp; Reference</h2>
+        <p class="text-secondary">Documentation and guides for working with OT protocols and security tools.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 bg-dark-subtle border-secondary">
+            <div class="card-body">
+                <h5><i class="bi bi-plug me-2 text-info"></i>Modbus Guide</h5>
+                <p class="text-secondary small">Learn Modbus TCP frame structure, function codes (01-23), and common attack vectors.</p>
+                <ul class="text-secondary small">
+                    <li>Function Code 1: Read Coils</li>
+                    <li>Function Code 3: Read Holding Registers</li>
+                    <li>Function Code 5: Write Single Coil</li>
+                    <li>Function Code 6: Write Single Register</li>
+                    <li>FC 16: Write Multiple Registers</li>
+                </ul>
+                <p class="text-secondary small mb-0">
+                    <strong>Detection:</strong> Monitor for writes to critical registers, unexpected function codes,
+                    and addresses outside normal operating ranges.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 bg-dark-subtle border-secondary">
+            <div class="card-body">
+                <h5><i class="bi bi-building me-2 text-warning"></i>BACnet Guide</h5>
+                <p class="text-secondary small">Building Automation and Control Networks — discover devices and objects.</p>
+                <ul class="text-secondary small">
+                    <li>Who-Is / I-Am discovery</li>
+                    <li>ReadProperty / WriteProperty</li>
+                    <li>Analog Input, Binary Output, etc.</li>
+                    <li>BACnet IP (UDP 47808/0xBAC0)</li>
+                </ul>
+                <p class="text-secondary small mb-0">
+                    <strong>Detection:</strong> Unexpected WriteProperty commands, device re-initialization,
+                    and objects entering fault state.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 bg-dark-subtle border-secondary">
+            <div class="card-body">
+                <h5><i class="bi bi-hdd-network me-2 text-success"></i>OPC UA Guide</h5>
+                <p class="text-secondary small">OPC Unified Architecture — platform-independent industrial communication.</p>
+                <ul class="text-secondary small">
+                    <li>TCP port 4840</li>
+                    <li>Client-Server publish/subscribe</li>
+                    <li>SecurityPolicy &amp; authentication</li>
+                    <li>Namespace browsing</li>
+                </ul>
+                <p class="text-secondary small mb-0">
+                    <strong>Detection:</strong> Unauthenticated connections, anonymous binds,
+                    and unexpected node writes.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 bg-dark-subtle border-secondary">
+            <div class="card-body">
+                <h5><i class="bi bi-chat-dots me-2 text-danger"></i>MQTT Guide</h5>
+                <p class="text-secondary small">MQTT publish/subscribe messaging for IoT and SCADA telemetry.</p>
+                <ul class="text-secondary small">
+                    <li>QoS levels 0, 1, 2</li>
+                    <li>Topic hierarchy (e.g., ot/plant1/plc1/temperature)</li>
+                    <li>Wildcard subscriptions (+ and #)</li>
+                    <li>Retained messages</li>
+                </ul>
+                <p class="text-secondary small mb-0">
+                    <strong>Detection:</strong> Unauthorized publishers, topic injection,
+                    and unexpected retained messages.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 bg-dark-subtle border-secondary">
+            <div class="card-body">
+                <h5><i class="bi bi-cpu me-2 text-primary"></i>S7 (Siemens) Guide</h5>
+                <p class="text-secondary small">Siemens S7 communication — used in Siemens PLC environments.</p>
+                <ul class="text-secondary small">
+                    <li>TCP port 102</li>
+                    <li>ISO-on-TCP (RFC 1006)</li>
+                    <li>Data Blocks (DB1, DB2, ...)</li>
+                    <li>Rack/Slot addressing</li>
+                </ul>
+                <p class="text-secondary small mb-0">
+                    <strong>Detection:</strong> Unauthorized block writes, S7-Online tampering,
+                    and connection storms.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 bg-dark-subtle border-secondary">
+            <div class="card-body">
+                <h5><i class="bi bi-shield-check me-2 text-info"></i>Detection Methodology</h5>
+                <p class="text-secondary small">General approach for OT threat detection in this lab.</p>
+                <ol class="text-secondary small">
+                    <li><strong>Baseline:</strong> Learn normal traffic patterns</li>
+                    <li><strong>Monitor:</strong> Use SIEM + packet capture</li>
+                    <li><strong>Detect:</strong> Identify anomalies vs known attacks</li>
+                    <li><strong>Classify:</strong> Fault vs cyber incident</li>
+                    <li><strong>Respond:</strong> Document findings and contain</li>
+                </ol>
+                <p class="text-secondary small mb-0">
+                    Reference the <a href="https://www.cisa.gov/news-events/news/defending-ot-operations" class="text-info">CISA OT Defense</a> guidance.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-warning mt-4 border-2">
+    <i class="bi bi-tools me-2"></i>
+    <strong>Pro Tip:</strong> Use the <strong>Safe Practice</strong> service (port 9090) to explore each protocol
+    without affecting the main lab environment. Start there if you're new to OT protocols!
+</div>
+{% endblock %}

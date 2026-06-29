@@ -1,0 +1,172 @@
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  OT-ICS Security Lab — Portal Styles                        ║
+   ║  FOR ISOLATED EDUCATIONAL USE ONLY — NEVER ON REAL SYSTEMS  ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+:root {
+    --lab-bg: #0a0e17;
+    --lab-card: #131a2b;
+    --lab-border: #1e2a3e;
+    --lab-accent: #00d4ff;
+    --lab-warning: #ff6b35;
+    --lab-danger: #ff1744;
+    --lab-success: #00e676;
+}
+
+body {
+    background-color: var(--lab-bg);
+    color: #e0e6f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.lab-banner {
+    background: linear-gradient(90deg, #1a0000, #3a0000, #1a0000);
+    color: #ff6b6b;
+    text-align: center;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ff174444;
+}
+
+.card {
+    background-color: var(--lab-card);
+    border-color: var(--lab-border);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    border-color: #3a4a6e;
+}
+
+.btn-outline-light {
+    border-color: var(--lab-border);
+    color: #c0d0e0;
+}
+
+.btn-outline-light:hover {
+    background-color: var(--lab-border);
+    border-color: var(--lab-accent);
+    color: white;
+}
+
+.progress {
+    background-color: #1a1a2e;
+    border-radius: 2px;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+.navbar {
+    background-color: #0d1117 !important;
+}
+
+.nav-link {
+    color: #8b9dc3 !important;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem !important;
+    border-radius: 4px;
+    margin: 0 2px;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link i {
+    margin-right: 6px;
+}
+
+.list-group-item {
+    border-color: var(--lab-border);
+    transition: background-color 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+code {
+    color: var(--lab-accent);
+    background-color: rgba(0, 212, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.footer {
+    font-size: 0.8rem;
+}
+
+.alert-info {
+    background-color: rgba(0, 212, 255, 0.1);
+    border-color: var(--lab-accent);
+    color: #b0e0ff;
+}
+
+.alert-warning {
+    background-color: rgba(255, 107, 53, 0.1);
+    border-color: var(--lab-warning);
+    color: #ffcc80;
+}
+
+.alert-danger {
+    background-color: rgba(255, 23, 66, 0.15);
+    border-color: var(--lab-danger);
+    color: #ff8a80;
+}
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.breadcrumb {
+    background-color: transparent;
+}
+
+.breadcrumb-item a {
+    color: var(--lab-accent);
+    text-decoration: none;
+}
+
+.form-control {
+    background-color: #0d1117;
+    border-color: var(--lab-border);
+    color: #e0e6f0;
+}
+
+.form-control:focus {
+    background-color: #0d1117;
+    border-color: var(--lab-accent);
+    color: white;
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0a0e17;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e2a3e;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2a3a5e;
+}

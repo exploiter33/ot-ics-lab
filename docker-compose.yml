@@ -1,0 +1,176 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║  OT-ICS Security Education Lab                              ║
+# ║  FOR ISOLATED EDUCATIONAL USE ONLY — NEVER ON REAL SYSTEMS  ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+version: "3.8"
+
+x-lab-defaults:
+  &lab-defaults
+  networks:
+    - ot-lab-net
+  restart: unless-stopped
+
+networks:
+  ot-lab-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.30.0.0/16"
+
+volumes:
+  elasticsearch-data:
+  kibana-data:
+
+services:
+
+  # ── Central Web Portal ──────────────────────────────────────
+  portal:
+    <<: *lab-defaults
+    build: ./portal
+    ports:
+      - "${PORTAL_PORT:-8080}:5000"
+    environment:
+      FLASK_ENV: development
+      SECRET_KEY: ot-lab-secret-key-change-in-production
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    volumes:
+      - ./portal:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ── MQTT Broker ─────────────────────────────────────────────
+  mosquitto:
+    <<: *lab-defaults
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:ro
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 5 mosquitto_sub -t '$$SYS/broker/version' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── Industrial Protocol Simulators ─────────────────────────
+  simulators:
+    <<: *lab-defaults
+    build: ./simulators
+    ports:
+      - "5020:5020"     # Modbus TCP
+      - "4840:4840"     # OPC UA
+      - "47808:47808/udp"  # BACnet/IP (0xBAC0)
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9099/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ── Attack Engine ──────────────────────────────────────────
+  attack-engine:
+    <<: *lab-defaults
+    build: ./attack_engine
+    depends_on:
+      simulators:
+        condition: service_healthy
+      mosquitto:
+        condition: service_healthy
+    profiles:
+      - attacks
+
+  # ── Log Generator ──────────────────────────────────────────
+  log-collector:
+    <<: *lab-defaults
+    build: ./log_collector
+    depends_on:
+      simulators:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+
+  # ── ELK Stack (SIEM) ───────────────────────────────────────
+  elasticsearch:
+    <<: *lab-defaults
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-8.11.0}
+    ports:
+      - "9200:9200"
+    environment:
+      - node.name=ot-lab-es
+      - cluster.name=ot-lab-siem
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  logstash:
+    <<: *lab-defaults
+    build: ./siem/logstash
+    ports:
+      - "5000:5000"
+      - "5000:5000/udp"
+    environment:
+      - LS_JAVA_OPTS=-Xms256m -Xmx256m
+    volumes:
+      - ./siem/logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./siem/logstash/config:/usr/share/logstash/config:ro
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  kibana:
+    <<: *lab-defaults
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION:-8.11.0}
+    ports:
+      - "${KIBANA_PORT:-5601}:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_NAME=ot-lab-kibana
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ── Safe Practice Area ─────────────────────────────────────
+  safe-practice:
+    <<: *lab-defaults
+    build: ./safe_practice
+    ports:
+      - "9090:9090"
+      - "5021:5021"     # Modbus practice
+      - "4841:4841"     # OPC UA practice
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}OT-ICS Security Lab — Welcome{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center min-vh-75 align-items-center">
+    <div class="col-lg-8 text-center">
+        <div class="display-1 mb-4">
+            <i class="bi bi-shield-shaded text-danger"></i>
+            <i class="bi bi-gear-wide-connected text-warning"></i>
+        </div>
+        <h1 class="display-4 fw-bold mb-3">OT-ICS Security Lab</h1>
+        <p class="lead text-secondary mb-4">
+            Industrial Control System &amp; Operational Technology
+            <br>
+            <strong>Cybersecurity Education &amp; Training Environment</strong>
+        </p>
+
+        <div class="alert alert-danger border-2" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>⚠ WARNING:</strong> This lab is designed for
+            <strong>isolated educational use only</strong>.
+            Never use these techniques against real systems.
+            <i class="bi bi-exclamation-triangle-fill ms-2"></i>
+        </div>
+
+        <div class="row g-4 my-5">
+            <div class="col-md-4">
+                <div class="card h-100 bg-dark-subtle border-secondary">
+                    <div class="card-body text-center p-4">
+                        <div class="display-6 mb-3 text-info"><i class="bi bi-diagram-3"></i></div>
+                        <h5>Purdue Model</h5>
+                        <p class="text-secondary small">Explore all 6 levels from physical process to enterprise systems</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 bg-dark-subtle border-secondary">
+                    <div class="card-body text-center p-4">
+                        <div class="display-6 mb-3 text-warning"><i class="bi bi-controller"></i></div>
+                        <h5>7 Protocols</h5>
+                        <p class="text-secondary small">Modbus, BACnet, OPC UA, MQTT, S7, Ethernet/IP, WebAPI</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 bg-dark-subtle border-secondary">
+                    <div class="card-body text-center p-4">
+                        <div class="display-6 mb-3 text-success"><i class="bi bi-shield-check"></i></div>
+                        <h5>Safe Practice</h5>
+                        <p class="text-secondary small">Isolated sandbox for protocol exploration and defensive testing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-5">
+            <div class="col-md-6">
+                <div class="card bg-dark-subtle border-info">
+                    <div class="card-body text-start">
+                        <h5 class="text-info"><i class="bi bi-mortarboard-fill me-2"></i>Learn</h5>
+                        <ul class="list-unstyled text-secondary small mb-0">
+                            <li><i class="bi bi-check-circle text-success me-2"></i>OT protocol analysis &amp; forensics</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>ICS attack detection &amp; response</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Purdue model &amp; defense-in-depth</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>SIEM correlation &amp; threat hunting</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-dark-subtle border-warning">
+                    <div class="card-body text-start">
+                        <h5 class="text-warning"><i class="bi bi-tools me-2"></i>Practice</h5>
+                        <ul class="list-unstyled text-secondary small mb-0">
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Reconnaissance &amp; enumeration</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Traffic analysis &amp; PCAP review</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Anomaly &amp; fault identification</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>Attack chain reconstruction</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('login') }}" class="btn btn-lg btn-danger px-5 py-3">
+            <i class="bi bi-shield-lock-fill me-2"></i>
+            Enter Lab — Authorized Users Only
+        </a>
+
+        <p class="text-muted small mt-3">
+            By entering, you confirm this is an isolated educational environment
+            and you will not use these skills against real systems.
+        </p>
+    </div>
+</div>
+{% endblock %}
